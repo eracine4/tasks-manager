@@ -14,7 +14,7 @@
     top: 50%;
     transform: translate(-50%, -50%);
 
-    background-color: rgba(43, 43, 43, 0.603);
+    background-color: rgba(0, 0, 0, 0.801);
     backdrop-filter: blur(10px);
     z-index: 10;
 
@@ -24,7 +24,9 @@
     animation: fade-in 1s 1;
 
     img {
+        border-radius: 5px;
         width: 250px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.856);
     }
 
     .form-container {
@@ -56,6 +58,7 @@
         &::after {
             content: '×';
             font-size: 5em;
+            color:white;
         }
     }
 }

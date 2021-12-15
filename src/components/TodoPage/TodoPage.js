@@ -47,7 +47,7 @@ const TodoPage = () => {
   useEffect(() => {
     setCurrentTasks(allTasks)
     sortAllTasks()
-  }, [allTasks])
+  }, [allTasks, currentSorting])
 
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -86,7 +86,6 @@ const TodoPage = () => {
 
   function sortAllTasks() {
     if (allTasks.filter(task => task.completionDate).length === 0) {
-      console.log('no finished tasks to sort.')
       if (currentTasks.length === 0) {
         setCurrentTasks(allTasks)
       }
@@ -94,11 +93,13 @@ const TodoPage = () => {
     }
 
     // set currentTasks by sorted allTasks by completionDate
-    let newOrderedTasks = []
+    let newOrderedTasks = allTasks
     switch (currentSorting) {
       case "asc":
         // set new ordered tasks by ascending completionDate of allTasks
-        newOrderedTasks = allTasks.sort((a, b) => {
+        newOrderedTasks.sort((a, b) => {
+          if (!a.completionDate || !b.completionDate)
+            return 0
           if (a.completionDate < b.completionDate) {
             return -1
           } else if (a.completionDate > b.completionDate) {
@@ -109,7 +110,9 @@ const TodoPage = () => {
         })
         break;
       case "desc":
-        newOrderedTasks = allTasks.sort((a, b) => {
+        newOrderedTasks.sort((a, b) => {
+          if (!a.completionDate || !b.completionDate)
+            return 0
           if (a.completionDate < b.completionDate) {
             return 1
           } else if (a.completionDate > b.completionDate) {
@@ -247,6 +250,15 @@ const TodoPage = () => {
     }
   }
 
+  const cardListClasses = () => {
+    let classes = 'card-list appear'
+
+    if (!showUnfinished)
+      classes += ' large'
+
+    return classes
+  }
+
   return (
     <div className="TodoPage page">
 
@@ -261,16 +273,18 @@ const TodoPage = () => {
         </div>
       </div>
       {popupTask && <EditTaskPopup saveTask={saveTask} closePopup={closePopup} task={popupTask} closeTaskPopup={closeTaskPopup}></EditTaskPopup>}
-      <div className='card-grid'>
+      {showUnfinished ? <div className='card-grid'>
         <div className='new-task-card'>
           <button onClick={onCreateNewTask}>
             <h2>New Task</h2>
           </button>
         </div>
-        {showUnfinished ? displayUnfinishedTasks() : <></>}
+        {displayUnfinishedTasks()}
       </div>
+        : <></>
+      }
       {showFinished ?
-        <div className='card-list appear'>
+        <div className={cardListClasses()}>
           <label className='list-title'>Finished Tasks {allTasks.filter(t => t.completionDate).length > 0 ? "(" + allTasks.filter(t => t.completionDate).length + ")" : ""}</label>
           {allTasks.filter(t => t.completionDate).length > 0 ? <button onClick={toggleDateSorting}>Sort by date {sortingSymbole()}</button> : <></>}
           {displayFinishedTasks()}

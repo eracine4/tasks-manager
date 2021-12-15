@@ -65,7 +65,13 @@
         min-width: 180px;
         min-height: 50vh;
 
-        button{
+transition:  all ease-in-out 0.5s;
+
+        &.large {
+            min-width: 500px;
+        }
+
+        button {
             background-color: beige;
             border: none;
             border: 1px solid black;
