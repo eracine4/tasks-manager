@@ -43,7 +43,7 @@ const TaskCard = (props) => {
             <input className='checkbox' type="checkbox" id="mark-as-done" checked={finished} onChange={onTaskCheckChange} ></input>
           </div>
         </div>
-        <h3>{task.id} {task.title}</h3>
+        <h4 className='task-title'>{task.title}</h4>
         <button onClick={() => props.openPopup(task)}>
           <p>{task.description}</p>
         </button>

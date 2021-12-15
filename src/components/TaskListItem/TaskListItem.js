@@ -59,7 +59,7 @@ const TaskListItem = (props) => {
             <img src={garbageIcon} alt="" />
           </button>
         </div>
-        <h4>{task.id} {task.title}</h4>
+        <h4 className='task-title'>{task.title}</h4>
         <p className='description-container'>{task.description}</p>
         {getCompletionDateLabel()}
       </div>

@@ -15,7 +15,7 @@ const TodoPage = () => {
   const [showUnfinished, setShowUnfinished] = useState(true)
   const [showFinished, setShowFinished] = useState(true)
 
-  const [currentSorting, setCurrentSorting] = useState(undefined)
+  const [currentSorting, setCurrentSorting] = useState('desc')
 
   const [removed, setRemoved] = useState([])
 
@@ -43,6 +43,10 @@ const TodoPage = () => {
   useEffect(() => {
     getRandomTasks()
   }, [])
+
+  useEffect(() => {
+    sortAllTasks()
+  }, [currentSorting])
 
   useEffect(() => {
     setCurrentTasks(allTasks)
@@ -95,32 +99,11 @@ const TodoPage = () => {
     // set currentTasks by sorted allTasks by completionDate
     let newOrderedTasks = allTasks
     switch (currentSorting) {
-      case "asc":
-        // set new ordered tasks by ascending completionDate of allTasks
-        newOrderedTasks.sort((a, b) => {
-          if (!a.completionDate || !b.completionDate)
-            return 0
-          if (a.completionDate < b.completionDate) {
-            return -1
-          } else if (a.completionDate > b.completionDate) {
-            return 1
-          } else {
-            return 0
-          }
-        })
+      case 'asc':
+        newOrderedTasks = allTasks.slice().sort((a, b) => new Date(b.completionDate) - new Date(a.completionDate));
         break;
-      case "desc":
-        newOrderedTasks.sort((a, b) => {
-          if (!a.completionDate || !b.completionDate)
-            return 0
-          if (a.completionDate < b.completionDate) {
-            return 1
-          } else if (a.completionDate > b.completionDate) {
-            return -1
-          } else {
-            return 0
-          }
-        })
+      case 'desc':
+        newOrderedTasks = allTasks.slice().sort((a, b) => new Date(a.completionDate) - new Date(b.completionDate));
         break;
       case undefined:
         newOrderedTasks = allTasks
@@ -128,7 +111,9 @@ const TodoPage = () => {
       default:
         break;
     }
-
+    if (currentTasks === newOrderedTasks) {
+      return;
+    }
     setCurrentTasks(newOrderedTasks)
   }
 
@@ -150,12 +135,10 @@ const TodoPage = () => {
     let finishedTasks = []
     for (var i in currentTasks) {
       let task = currentTasks[i]
-      if (task.title) {
-        if (task.completionDate) {
-          // if task is not in removed array
-          if (!removed.includes(task.id)) {
-            finishedTasks.push(<TaskListItem key={"task_" + task.id} task={task} taskDelete={taskDelete} onTaskCheckChange={onTaskCheckChange}></TaskListItem>)
-          }
+      if (task.completionDate) {
+        // if task is not in removed array
+        if (!removed.includes(task.id)) {
+          finishedTasks.push(<TaskListItem key={"task_" + task.id} task={task} taskDelete={taskDelete} onTaskCheckChange={onTaskCheckChange}></TaskListItem>)
         }
       }
     }
