@@ -193,7 +193,9 @@ const TodoPage = () => {
     // get random value in action and object arrays
     let action = ACTIONS[Math.floor(Math.random() * ACTIONS.length)]
     // get random value in object array
-    let object = OBJECTS[Math.floor(Math.random() * OBJECTS.length)]
+    let object = action + " " + OBJECTS[Math.floor(Math.random() * OBJECTS.length)]
+
+
 
     let id = 0
     // while id is already in allTasks
