@@ -1,0 +1,57 @@
+.TaskCard {
+    width: fit-content;
+    max-height: 200px;
+    animation: fade-in-up 0.5s 1;
+
+    &.disappear {
+        animation-fill-mode: forwards !important;
+        animation: fade-out 0.5s 1;
+    }
+
+    &.appear {
+        animation-fill-mode: forwards !important;
+        animation: fade-in-up 0.5s 1;
+    }
+
+    .card {
+        position: relative;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
+        padding: 12px;
+        min-height: 150px;
+
+        p {
+            width: 180px;
+        }
+
+        button {
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+        }
+    }
+}
+
+// fade out keyframes animation
+@keyframes fade-out {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fade-in-up {
+    0% {
+        opacity: 0;
+        transform: translate(0, -50%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}

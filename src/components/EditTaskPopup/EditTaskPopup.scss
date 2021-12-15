@@ -1,0 +1,58 @@
+.EditTaskPopup {
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: rgba(43, 43, 43, 0.603);
+    backdrop-filter: blur(10px);
+    z-index: 10;
+
+    color: white;
+
+    img {
+        width: 250px;
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        gap: 15px;
+
+        width: 300px;
+        height: 400px;
+
+        input,
+        button,
+        textarea {
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+
+    }
+
+    .close-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        border: none;
+        background-color: transparent;
+
+        &::after {
+            content: '×';
+            font-size: 5em;
+        }
+    }
+}
