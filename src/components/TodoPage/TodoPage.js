@@ -15,7 +15,7 @@ const TodoPage = () => {
   const [showUnfinished, setShowUnfinished] = useState(true)
   const [showFinished, setShowFinished] = useState(true)
 
-  const [currentSorting, setCurrentSorting] = useState('desc')
+  const [currentSorting, setCurrentSorting] = useState(undefined)
 
   const [removed, setRemoved] = useState([])
 

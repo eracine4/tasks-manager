@@ -3,9 +3,10 @@
 }
 
 .page{
-  background-color: rgb(60, 37, 88);
+  background-color: rgb(185, 111, 61);
   min-height: 100vh;
-    min-width: 100vh;
+  height: fit-content;
+  min-width: 100vh;
 
     overflow-x: hidden;
 }
