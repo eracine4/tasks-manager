@@ -17,6 +17,10 @@
 
         img {
             width: 18px;
+
+            @media (max-width: 768px) {
+                width: 25px
+            }
         }
     }
 
