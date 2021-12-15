@@ -27,7 +27,16 @@ const TaskListItem = (props) => {
 
   // Normalize the date into a simpler format
   function normalizeDate(date) {
-    return date.toLocaleDateString();
+    // return localeDateString and time in 24 hour format with seconds
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: false
+    })
   }
 
   function onTaskCheckChange(event) {

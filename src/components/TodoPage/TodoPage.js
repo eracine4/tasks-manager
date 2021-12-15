@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  useLayoutEffect, useEffect, useState, useReducer
+} from 'react';
 import './TodoPage.scss';
 import TaskCard from './../TaskCard/TaskCard';
 import TaskListItem from './../TaskListItem/TaskListItem';
@@ -43,12 +45,15 @@ const TodoPage = () => {
   }, [])
 
   useEffect(() => {
-    sortTasks()
-  }, [allTasks, currentSorting])
+    setCurrentTasks(allTasks)
+    sortAllTasks()
+  }, [allTasks])
 
-  const [currentTasks, setCurrentTasks] = useState(allTasks)
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-  function sortByDate() {
+  const [currentTasks, setCurrentTasks] = useState([])
+
+  function toggleDateSorting() {
     if (currentSorting === 'asc') {
       setCurrentSorting('desc')
     } else if (currentSorting === 'desc') {
@@ -79,48 +84,79 @@ const TodoPage = () => {
     setAllTasks(tasks)
   }
 
-  function sortTasks() {
+  function sortAllTasks() {
+    if (allTasks.filter(task => task.completionDate).length === 0) {
+      console.log('no finished tasks to sort.')
+      if (currentTasks.length === 0) {
+        setCurrentTasks(allTasks)
+      }
+      return;
+    }
+
     // set currentTasks by sorted allTasks by completionDate
+    let newOrderedTasks = []
     switch (currentSorting) {
       case "asc":
-        setCurrentTasks(allTasks.sort((a, b) => (a.completionDate > b.completionDate) ? 1 : -1))
+        // set new ordered tasks by ascending completionDate of allTasks
+        newOrderedTasks = allTasks.sort((a, b) => {
+          if (a.completionDate < b.completionDate) {
+            return -1
+          } else if (a.completionDate > b.completionDate) {
+            return 1
+          } else {
+            return 0
+          }
+        })
         break;
       case "desc":
-        setCurrentTasks(allTasks.sort((a, b) => (a.completionDate > b.completionDate) ? -1 : 1))
+        newOrderedTasks = allTasks.sort((a, b) => {
+          if (a.completionDate < b.completionDate) {
+            return 1
+          } else if (a.completionDate > b.completionDate) {
+            return -1
+          } else {
+            return 0
+          }
+        })
         break;
       case undefined:
-        setCurrentTasks(allTasks)
+        newOrderedTasks = allTasks
         break;
       default:
         break;
     }
+
+    setCurrentTasks(newOrderedTasks)
   }
 
   const displayUnfinishedTasks = () => {
-    let tasks = []
-    currentTasks.forEach((task, index) => {
+    let unfinishedTasks = []
+    for (var i in currentTasks) {
+      let task = currentTasks[i]
       if (!task.completionDate) {
         // if removed doesn't include a task with same id
         if (!removed.includes(task.id)) {
-          tasks.push(<TaskCard key={"task_" + index} task={task} openPopup={openPopup} taskDelete={taskDelete} onTaskCheckChange={onTaskCheckChange}></TaskCard>)
+          unfinishedTasks.push(<TaskCard key={"task_" + task.id} task={task} openPopup={openPopup} taskDelete={taskDelete} onTaskCheckChange={onTaskCheckChange}></TaskCard>)
         }
       }
-    })
-    return tasks;
+    }
+    return unfinishedTasks;
   }
 
   const displayFinishedTasks = () => {
-    let tasks = []
-
-    currentTasks.forEach((task, index) => {
-      if (task.completionDate) {
-        // if task is not in removed array
-        if (!removed.includes(task.id)) {
-          tasks.push(<TaskListItem key={"task_" + index} task={task} taskDelete={taskDelete} onTaskCheckChange={onTaskCheckChange}></TaskListItem>)
+    let finishedTasks = []
+    for (var i in currentTasks) {
+      let task = currentTasks[i]
+      if (task.title) {
+        if (task.completionDate) {
+          // if task is not in removed array
+          if (!removed.includes(task.id)) {
+            finishedTasks.push(<TaskListItem key={"task_" + task.id} task={task} taskDelete={taskDelete} onTaskCheckChange={onTaskCheckChange}></TaskListItem>)
+          }
         }
       }
-    })
-    return tasks;
+    }
+    return finishedTasks;
   }
 
   // open the modification popup
@@ -146,23 +182,25 @@ const TodoPage = () => {
   // On checkbox (done/not done) change
   const onTaskCheckChange = (task, checked) => {
 
-    console.log(checked ? "checked" : "unchecked", task.id)
-
     setTimeout(() => {
       let tasks = [...allTasks]
       tasks.filter(t => t.id === task.id)[0] = task
       setAllTasks(tasks)
+      forceUpdate()
     }, disappearAfterTime);
   }
 
   // Remove task from the list
   const taskDelete = (task) => {
-    console.log("delete", task.id + " " + task.title)
-    let newAllTasks = allTasks.filter(t => !(t.title === task.title && t.description === task.description))
 
+    console.log("delete", task.id + " " + task.title)
+    let newAllTasks = allTasks.filter(t => (t.id !== task.id))
+    if (newAllTasks.filter(t => t.id === task.id).length === 0)
+      console.log("Now not containing", task.id + " " + task.title)
     setRemoved([...removed, task.id])
 
-    setAllTasks(newAllTasks)
+    setAllTasks([...newAllTasks])
+    forceUpdate()
   }
 
   const onCreateNewTask = () => {
@@ -170,7 +208,6 @@ const TodoPage = () => {
     let action = ACTIONS[Math.floor(Math.random() * ACTIONS.length)]
     // get random value in object array
     let object = OBJECTS[Math.floor(Math.random() * OBJECTS.length)]
-
 
     let id = 0
     // while id is already in allTasks
@@ -183,7 +220,6 @@ const TodoPage = () => {
       setRemoved(removed.filter(r => r !== id))
     }
 
-
     let newTask = {
       title: action,
       description: object,
@@ -191,10 +227,24 @@ const TodoPage = () => {
       id: id
     }
     setAllTasks([...allTasks, newTask])
+    forceUpdate()
   }
 
   function closeTaskPopup() {
     setPopupTask(undefined)
+  }
+
+  const sortingSymbole = () => {
+    let up = "▲"
+    let down = "▼"
+
+    if (currentSorting === 'asc') {
+      return up
+    } else if (currentSorting === 'desc') {
+      return down
+    } else {
+      return ""
+    }
   }
 
   return (
@@ -222,7 +272,7 @@ const TodoPage = () => {
       {showFinished ?
         <div className='card-list appear'>
           <label className='list-title'>Finished Tasks {allTasks.filter(t => t.completionDate).length > 0 ? "(" + allTasks.filter(t => t.completionDate).length + ")" : ""}</label>
-          <button onClick={sortByDate}>Sort by date {currentSorting}</button>
+          {allTasks.filter(t => t.completionDate).length > 0 ? <button onClick={toggleDateSorting}>Sort by date {sortingSymbole()}</button> : <></>}
           {displayFinishedTasks()}
         </div>
         : <></>

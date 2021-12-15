@@ -19,8 +19,6 @@ const TaskCard = (props) => {
   }
 
   function getCardClasses() {
-    if (finished)
-      console.log(task.completionDate ? "finished" : "unfinished", task.id)
     let classes = "TaskCard "
     if (finished) {
       classes += " disappear"

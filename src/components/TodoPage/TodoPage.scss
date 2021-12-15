@@ -61,15 +61,26 @@
     .card-list {
         display: flex;
         flex-direction: column;
-        background-color: beige;
+        background-color: rgb(255, 239, 218);
         min-width: 180px;
         min-height: 50vh;
+
+        button{
+            background-color: beige;
+            border: none;
+            border: 1px solid black;
+            padding: 10px 15px;
+            width: fit-content;
+            align-self: center;
+            border-radius: 4px;
+        }
 
         .list-title {
             color: black;
             font-weight: 600;
             font-size: 1.2em;
             text-decoration: underline;
+            padding: 10px 5px;
         }
 
         &.appear {
